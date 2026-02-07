@@ -1,14 +1,15 @@
 title = "device_config"
 
 [color_camera_config]
-color_camera = "/dev/video2"  
+color_camera = "/dev/video6"  
 colors = ["red","blue","green","white","black"]
 
-hsv_red   = [0, 0, 0]
-hsv_blue  = [0, 0, 0]
-hsv_green = [0, 0, 0]
-hsv_white = [0, 0, 0]
-hsv_black = [0, 0, 0]
+# H_min H_max S_min S_max  V_min V_max
+hsv_red  = [0,50,160,255,110,255]
+hsv_blue  = [100, 137,124,255,56,255]
+hsv_green = [50, 100,91,255,85,255]
+hsv_black = [0, 179, 0, 255,0,76]
+hsv_white = [0, 170, 0, 55,120,255]
 
 [qr_camera_config]
 qr_camera  = "/dev/video2"

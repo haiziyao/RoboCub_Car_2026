@@ -21,11 +21,11 @@ pub struct ColorCameraConfig {
     pub color_camera: String,
     pub colors: Vec<String>,
 
-    pub hsv_red: [i32; 3],
-    pub hsv_blue: [i32; 3],
-    pub hsv_green: [i32; 3],
-    pub hsv_white: [i32; 3],
-    pub hsv_black: [i32; 3],
+    pub hsv_red: [i32; 6],
+    pub hsv_blue: [i32; 6],
+    pub hsv_green: [i32; 6],
+    pub hsv_black: [i32; 6],
+    pub hsv_white: [i32; 6],
 }
 
 #[derive(Debug, Deserialize, Clone)]

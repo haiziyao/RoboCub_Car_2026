@@ -1,20 +1,14 @@
-mod device;
-
+use car_cv::utils::device_config_util::get_config;
+use car_cv::device::color_detect::color_detect_work;
 use anyhow::{Result};
-use device::config::DeviceConfig;
 
-use crate::device::config;
 
 fn main() -> Result<()> {
-    let my_config = getConfig()?; 
-    device::camera::main(my_config.color_camera_config)?;
+    let my_config = get_config()?; 
+    color_detect_work::work(my_config.color_camera_config, true)?;
    Ok(())
 }
 
 
 
-
-fn getConfig() -> Result<DeviceConfig> {
-    let filepath = "/config/param.toml";
-    DeviceConfig::from_file(filepath)
-} 
+ 

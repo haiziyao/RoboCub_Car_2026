@@ -1,3 +1,3 @@
-pub mod utils;
-pub mod device;
 pub mod config;
+pub mod device;
+pub mod utils;

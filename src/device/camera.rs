@@ -1,6 +1,7 @@
-use crate::device::{camera, config::ColorCameraConfig};
+use crate::config::device_config::{ColorCameraConfig,QrCameraConfig};
 
-use anyhow::Result;  
+
+use anyhow::{Ok, Result};  
 use opencv::{
     prelude::*,
     videoio,
@@ -9,26 +10,23 @@ use opencv::{
 
 
 
-pub fn main(config:ColorCameraConfig) -> Result<()> { // Note, this is anyhow::Result
+pub fn register_color_camera(config:ColorCameraConfig) -> Result<videoio::VideoCapture> {  
 
     let camera_filename = config.color_camera;
     // Open a GUI window
     highgui::named_window("window", highgui::WINDOW_FULLSCREEN)?;
     // Open the web-camera (assuming you have one)
-    let mut cam = videoio::VideoCapture::from_file(&camera_filename, videoio::CAP_ANY)?;
-    let mut frame = Mat::default(); // This array will store the web-cam data
-    // Read the camera
-    // and display in the window
-    loop {
-        cam.read(&mut frame)?;
-        highgui::imshow("window", &frame)?;
-        let key = highgui::wait_key(1)?;
-        if key == 113 { // quit with q
-            break;
-        }
-    }
-    Ok(())
+    let mut cam = videoio::VideoCapture::from_file(&camera_filename, videoio::CAP_V4L2)?;
+    Ok(cam)
 }
 
- 
+pub fn register_qr_camera(config:QrCameraConfig)-> Result<videoio::VideoCapture> {  
+
+    let camera_filename = config.qr_camera;
+    // Open a GUI window
+    highgui::named_window("window", highgui::WINDOW_FULLSCREEN)?;
+    // Open the web-camera (assuming you have one)
+    let mut cam = videoio::VideoCapture::from_file(&camera_filename, videoio::CAP_V4L2)?;
+    Ok(cam)
+}
 
