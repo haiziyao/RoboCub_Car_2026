@@ -25,7 +25,7 @@ pub fn work(config: ColorCameraConfig,state:bool) -> Result<()> {
         let (color_name, ratio) = detect_color_in_circle_mask(&frame, &circle_mask, &config)?;
 
 
-        if state {// TODO: 迟早state也封装进去
+        if state {    // TODO: 迟早state也封装进去
             // 画出圆形 ROI
             let size = frame.size()?;
             let w = size.width;

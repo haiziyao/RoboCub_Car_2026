@@ -11,4 +11,10 @@ fn main() -> Result<()> {
 
 
 
- 
+
+#[test]
+fn test_color_detect() -> Result<()> {
+    let my_config = get_config()?; 
+    color_detect_work::work(my_config.color_camera_config, true)?;
+   Ok(())
+}

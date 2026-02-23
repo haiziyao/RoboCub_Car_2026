@@ -1,3 +1,8 @@
+/// Rust中的OpenCV的api封装的不够流畅
+/// 在代码文件中写起来很费力气
+/// 这里进行一次封装
+/// 注意这里知识简单化封装
+
 use anyhow::{Ok, Result};
 use opencv::{
     core,

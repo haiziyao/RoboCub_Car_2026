@@ -2,6 +2,7 @@
 //!    已经全部弃用
 //!    已经全部弃用
 //!    已经全部弃用
+//! 没有加在mod里面，不会导出
 use crate::config::device_config::{ColorCameraConfig};
 use anyhow::{Result, bail};
 use opencv::{

@@ -37,7 +37,7 @@ fn test_hsv() -> Result<()> {
     highgui::create_trackbar("V max", "controls", Some(&mut v_max), 255, None)?;
 
     // ===== 打开相机 =====
-    // 你有 register_color_camera 就用它（推荐）
+    // register_color_camera 
     let mut cam = crate::device::camera::register_color_camera(config.clone())?;
     if !videoio::VideoCapture::is_opened(&cam)? {
         bail!("无法打开相机：{}", config.color_camera);
@@ -46,8 +46,8 @@ fn test_hsv() -> Result<()> {
     let mut frame = Mat::default();
     let mut result = Mat::default();
 
-    // 你要只关注屏幕中间圆
-    let radius_ratio: f64 = 0.40; // TODO 你自己调：0.35~0.45 常用
+    
+    let radius_ratio: f64 = 0.40; // TODO 自己调：0.35~0.45 常用，中间圆的大小
 
     loop {
         cam.read(&mut frame)?;
@@ -83,7 +83,7 @@ fn test_hsv() -> Result<()> {
         let mut mask_in_circle = Mat::default();
         core::bitwise_and(&mask, &mask, &mut mask_in_circle, &circle_mask)?;
 
-        // ===== 可选：额外处理（按你项目需要开/闭/模糊）=====
+        // ===== 可选：额外处理（开/闭/模糊）=====
         // 例：开运算去小白噪点
         // let k = kernel_factory(5, MyKernelShape::Ellipse)?;
         // let mask_in_circle = morph_open(&mask_in_circle, &k)?;
