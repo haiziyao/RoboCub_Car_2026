@@ -34,11 +34,13 @@ fn main() -> Result<()> {
                     println!("Performing operation for a1");
                     let color_name = color_detect_work::work(color_config.clone())?;
                     send_line(&mut uart, &color_name)?;
+                    println!("a1 Worked Well: {}",color_name);
                     color_pin.set_high();
                 } else if received_data == "b2" {
                     qr_pin.set_low();
                     println!("Performing operation for b2");
                     let task_num = qr_detect_work::work(qr_config.clone())?;
+                    println!("b2 Worked Well: {}",task_num);
                     send_line(&mut uart, &task_num.to_string())?;
                     qr_pin.set_high();
                 }
