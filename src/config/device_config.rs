@@ -14,13 +14,18 @@ pub struct DeviceConfig {
     pub qr_camera_config: QrCameraConfig,
     pub cross_camera_config: CrossCameraConfig,
     pub gpio_config: GpioConfig,
+    pub light_config:LightConfig,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ColorCameraConfig {
     pub color_camera: String,
+    pub debug_model:bool,
+    pub loop_model:bool,
+    pub loop_count:i32,
+    pub radius_ratio:f64,
+    pub detect_area_access_rate:f64,
     pub colors: Vec<String>,
-
     pub hsv_red: [i32; 6],
     pub hsv_blue: [i32; 6],
     pub hsv_green: [i32; 6],
@@ -31,6 +36,7 @@ pub struct ColorCameraConfig {
 #[derive(Debug, Deserialize, Clone)]
 pub struct QrCameraConfig {
     pub qr_camera: String,
+    pub debug_model:bool,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -40,7 +46,19 @@ pub struct CrossCameraConfig {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GpioConfig {
-    pub pin: Vec<String>,
+    pub serial: String,
+ 
+    pub baud: u32,
+    pub data_bit:u8,
+    pub stop_bit:u8,
+    pub parity_bit:bool,
+ 
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct LightConfig{
+    pub color_light_pin:u8,
+    pub qr_light_pin:u8,
+    pub gpio_light_pin:u8,
 }
 
 impl DeviceConfig {

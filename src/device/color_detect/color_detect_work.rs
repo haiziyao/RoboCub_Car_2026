@@ -1,7 +1,6 @@
 use crate::{config::device_config::ColorCameraConfig, device::camera};
-use crate::device::color_detect::color_detect_utils::{roi_circle_mask,hsv_inrange,
-hsv_scalar_factory};
-use anyhow::Result;
+use crate::utils::cv_util::{roi_circle_mask,hsv_inrange,hsv_scalar_factory};
+use anyhow::{Ok, Result};
 use opencv::{
     core::{self, Mat, Scalar},
     highgui,
@@ -10,53 +9,53 @@ use opencv::{
 };
 
 
-pub fn work(config: ColorCameraConfig,state:bool) -> Result<()> {
 
+ 
+
+pub fn work(config: ColorCameraConfig) -> Result<String> {
     let mut cam = camera::register_color_camera(config.clone())?;
+
+    let mut best_color: String = String::new();
+   
+    let mut count:i32 = 0;
 
     loop {
         let mut frame = core::Mat::default();
         cam.read(&mut frame)?;
-        if frame.empty() {continue;}
-        
-        let rate =  0.8;  // TODO: 封装进去config
-        let (_roi, circle_mask) = roi_circle_mask(&frame, rate)?;
- 
+        if frame.empty() { continue; }
+
+        let (_roi, circle_mask) = roi_circle_mask(&frame, config.radius_ratio)?;
         let (color_name, ratio) = detect_color_in_circle_mask(&frame, &circle_mask, &config)?;
 
+        if config.debug_model {
+            draw_debug_info(&mut frame, &color_name, ratio, config.radius_ratio)?;
 
-        if state {    // TODO: 迟早state也封装进去
-            // 画出圆形 ROI
-            let size = frame.size()?;
-            let w = size.width;
-            let h = size.height;
-            let cx = w / 2;
-            let cy = h / 2;
-            let r = ((w.min(h) as f64) * rate) as i32;
-
-            imgproc::circle(
-                &mut frame,
-                core::Point::new(cx, cy),
-                r,
-                core::Scalar::new(0.0, 255.0, 0.0, 0.0),
-                2,
-                imgproc::LINE_8,
-                0,
-            )?;
-
-            let label = format!("color: {}  ratio: {:.2}", color_name, ratio);
-            draw_label(&mut frame, &label, 10, 30)?;
-
-            highgui::imshow("color_detect", &frame)?;
             let key = highgui::wait_key(1)?;
             if key == 113 || key == 27 {
                 break; // q / esc
             }
         }
+        if !config.debug_model{
+            if count == 0 {
+                best_color = color_name.clone();   
+                count += 1;
+            } else {
+                if best_color == color_name {
+                    count += 1;
+                } else {
+                    best_color.clear();   
+                    count = 0;
+                }
+            }
+            if count > 10 {
+                return Ok(best_color);
+            }
+        }
     }
 
-    Ok(())
+    Ok(String::new())
 }
+
 
  
 //* 计算在ROI区域内，过滤得到的颜色的面积 */
@@ -102,7 +101,7 @@ fn detect_color_in_circle_mask(
         }
     }
 
-    if best_ratio >= 0.80 {
+    if best_ratio >= config.detect_area_access_rate {
         Ok((best_name, best_ratio))
     } else {
         Ok(("unknown".to_string(), best_ratio))
@@ -123,5 +122,33 @@ fn draw_label(frame: &mut Mat, text: &str, x: i32, y: i32) -> Result<()> {
         imgproc::LINE_AA,
         false,
     )?;
+    Ok(())
+}
+
+fn draw_debug_info(frame: &mut core::Mat, color_name: &str, ratio: f64, radius_ratio: f64) -> Result<()> {
+    let size = frame.size()?;
+    let w = size.width;
+    let h = size.height;
+    let cx = w / 2;
+    let cy = h / 2;
+    let r = ((w.min(h) as f64) * radius_ratio) as i32;
+
+    // 画出圆形 ROI
+    imgproc::circle(
+        frame,
+        core::Point::new(cx, cy),
+        r,
+        core::Scalar::new(0.0, 255.0, 0.0, 0.0),
+        2,
+        imgproc::LINE_8,
+        0,
+    )?;
+
+    // 显示标签
+    let label = format!("color: {}  ratio: {:.2}", color_name, ratio);
+    draw_label(frame, &label, 10, 30)?;
+
+    // 显示图像
+    highgui::imshow("color_detect", frame)?;
     Ok(())
 }

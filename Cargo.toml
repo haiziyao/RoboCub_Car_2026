@@ -9,3 +9,6 @@ opencv = "0.75"
 serde = {version = "1.0.228" , features = ["derive"]} 
 toml = "0.9.11"
 quircs = "0.10"
+rppal = "0.22.1"
+serialport = "4.8.1"
+thread = "0.0.1"
