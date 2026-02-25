@@ -19,6 +19,7 @@ pub enum MyKernelShape {
     Cross,  //十字形，很少用
 }
 
+#[allow(dead_code)]
 //*一般kernel是奇数，自己注意一下   记得用枚举类kernel核的形状 */    
 fn kernel_factory(ksize: i32,shape:MyKernelShape) -> Result<Mat> { //TODO偷懒了，健壮性不足
     let shape = match shape {

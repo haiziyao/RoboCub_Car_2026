@@ -20,7 +20,7 @@ pub fn send_line(uart:&mut Uart, s: &str) ->Result<()> {
 pub fn receive_line(uart:&mut Uart) ->Result<()>{
     let mut buffer = [0u8;4];
     uart.read(&mut buffer)?;
-    let received = String::from_utf8_lossy(&buffer).to_string();
+    let _received = String::from_utf8_lossy(&buffer).to_string();
     uart.flush(Queue::Input)?;
     Ok(())
 }

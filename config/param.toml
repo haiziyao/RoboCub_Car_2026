@@ -3,7 +3,7 @@ title = "device_config"
 [color_camera_config]
 color_camera = "/dev/video6"  
 
-debug_model = false
+debug_model = true
 loop_model = true  # 现在还没用到，等到gpio开发出来再使用
 loop_count = 10
 radius_ratio = 0.8  # ROI圆直径 占用整个相机试图的比例

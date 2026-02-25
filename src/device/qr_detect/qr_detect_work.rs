@@ -1,9 +1,8 @@
 use anyhow::{Result};
 use opencv::core::MatTraitConstManual;
 use opencv::highgui;
-use opencv::prelude::BinaryDescriptor_ParamsTraitConst;
 use crate::{config::device_config::QrCameraConfig, device::camera::register_qr_camera};
-use crate::utils::cv_util::{threshold,bgr_to_gray};
+use crate::utils::cv_util::bgr_to_gray;
 use opencv::{
     core::{self, MatTraitConst}, videoio::VideoCaptureTrait,
 };
@@ -18,8 +17,8 @@ pub fn work(config:QrCameraConfig)-> Result<i32>{
         if frame.empty() {continue;}
 
         let mut processed_frame = frame_pre_process(&mut frame)?;
-        let mut content: String;
-        let mut num:i32 = -1;
+        let content: String;
+        let num:i32;
 
 
         if config.debug_model {
@@ -48,7 +47,7 @@ fn frame_pre_process(frame:&mut core::Mat) ->Result<core::Mat>{
     // let maxval = 255.0;
     // let mut binary = threshold(frame, thresh, maxval)?;
 
-    let mut gray = bgr_to_gray(frame)?;
+    let gray = bgr_to_gray(frame)?;
     Ok(gray)
 }
 
@@ -63,7 +62,7 @@ fn decode_qr(processed_frame: &core::Mat) -> Result<String> {
     let codes = decoder.identify(width, height, &data[..width * height]);
     let mut content = String::new();
 
-    for (i, code_res) in codes.enumerate() {
+    for (_i, code_res) in codes.enumerate() {
 
         let code = match code_res {
             Ok(c) => c,
@@ -96,7 +95,7 @@ fn decode_qr_debugging(processed_frame: &core::Mat) -> Result<String> {
 
     let mut decoder = quircs::Quirc::default();
     let codes = decoder.identify(width, height, &data[..width * height]);
-    let mut content = String::new();
+    let  content ;
 
     for (i, code_res) in codes.enumerate() {
 

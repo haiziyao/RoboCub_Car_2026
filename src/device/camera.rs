@@ -3,8 +3,7 @@ use crate::config::device_config::{ColorCameraConfig,QrCameraConfig};
 
 use anyhow::{Ok, Result};  
 use opencv::{
-    videoio,
-    highgui
+    videoio
 }; 
 
 

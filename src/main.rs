@@ -8,11 +8,11 @@ use car_cv::device::gpio::gpio_work::{receive_line_loop,register_gpio,send_line,
 
 fn main() -> Result<()> {
     let my_config = get_config()?; 
-    let (gpio_config,qr_config,color_config,cross_config,light_config) = 
-    (my_config.gpio_config,my_config.qr_camera_config,my_config.color_camera_config,my_config.cross_camera_config,my_config.light_config);
+    let (gpio_config,qr_config,color_config,light_config) = 
+    (my_config.gpio_config,my_config.qr_camera_config,my_config.color_camera_config, my_config.light_config);
     
     let gpio_config_main = gpio_config.clone();
-    let light_config_main = light_config.clone();
+    
 
 
     let (tx, rx) = mpsc::channel();
@@ -26,7 +26,7 @@ fn main() -> Result<()> {
     loop {
         match rx.recv() {
             Ok(received_data) => {
-               
+                gpio_pin.set_low();
                 println!("Main thread received: {}", received_data);
                 // 根据接收到的数据执行相应的操作
                 if received_data == "a1" {
@@ -44,6 +44,7 @@ fn main() -> Result<()> {
                     send_line(&mut uart, &task_num.to_string())?;
                     qr_pin.set_high();
                 }
+                gpio_pin.set_high();
             }
             Err(e) => {
                 eprintln!("Failed to receive data: {}", e);

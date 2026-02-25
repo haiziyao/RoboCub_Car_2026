@@ -1,3 +1,6 @@
+#![cfg(test)]
+#![allow(unused_imports)]
+
 use anyhow::{Result, bail};
 use opencv::{core, highgui, imgproc, prelude::*, videoio};
 use quircs::Quirc;
@@ -6,6 +9,7 @@ use crate::{
     device::camera,
     utils::device_config_util::get_config,
 };
+
 
 fn decode_qr_quircs(gray_u8: &opencv::core::Mat) -> Result<Vec<String>> {
     // typ() 不是 Result

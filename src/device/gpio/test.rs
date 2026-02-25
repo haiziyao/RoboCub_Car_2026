@@ -1,7 +1,11 @@
+#![cfg(test)]
+#![allow(unused_imports)]
+
 use std::time::Duration;
 use std::io::{self, Write, Read};
 use std::thread;
 use anyhow::Result;
+
 #[test]
 
 fn try_fn() -> Result<()> {
