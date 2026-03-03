@@ -1,7 +1,7 @@
 title = "device_config"
 
 [color_camera_config]
-color_camera = "/dev/video0"
+color_camera = "/dev/video4"
 
 debug_model = false
 loop_count = 10
@@ -18,7 +18,7 @@ hsv_white = [0, 170, 0, 55,120,255]
 
 
 [qr_camera_config]
-qr_camera  = "/dev/video4"
+qr_camera  = "/dev/video2"
 debug_model = false
 
 
@@ -26,9 +26,9 @@ debug_model = false
 cross_camera = "/dev/video2"
 
 [gpio_config]
-serial = "dev/serial0"
+serial = "/dev/ttyV0"
 
-baud = 115200   # or 9600
+baud = 9600   # or 9600
 data_bit = 8
 stop_bit = 1 
 parity_bit = false #功能中尚未实现校验功能，也就是这个参数没用

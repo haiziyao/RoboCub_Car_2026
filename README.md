@@ -1,6 +1,8 @@
 ## RuboVision Engine
 ### 项目简介
 2026 RoboCup车型竞技机器人视觉组代码。部署在树莓派5的 Rust + OpenCV项目。集成颜色识别，二维码识别，GPIO状态灯，UART串口通信，cross检测。
+
+[bugs](/assets/md/bugslisting.md)
 ### 功能概述
 * 基于ROI的颜色识别：适用于摄像头固定在夹爪上这种情况，有效避免了杂乱环境的影响
 * 基于quircs库的二维码解码: 多数openCV版本不带二维码解码库，为方便维护，使用Rust Crate
@@ -111,6 +113,14 @@ ls /dev/video*
 sudo apt install v4l-utils
 v4l2-ctl --list-devices
 ```
+
+#### 配置权限
+``` bash
+# 将自己放入gpio用户组
+sudo usermod -aG gpio $USER 
+
+```
+
 #### 支持命令行配置参数
 
 ``` bash
@@ -123,6 +133,82 @@ cargo run -- -k color_cam qr_cam -v /dev/video0 /dev/video4
 # "qr_cam"    => Some(("qr_camera_config", "qr_camera"))
 # "cross_cam" => Some(("cross_camera_config", "cross_camera"))
 # "serial"    => Some(("gpio_config", "serial"))
+```
+
+#### 创建虚拟串口进行 debug
+
+``` bash
+sudo apt-get install socat
+sudo socat PTY,link=/dev/ttyV0,raw,echo=0 PTY,link=/dev/ttyV1,raw,echo=0
+sudo chmod 666 /dev/ttyV0 /dev/ttyV1
+# 在程序中配置 /dev/ttyV0
+echo "a1" > /dev/ttyV0
+
+screen /dev/ttyV0 9600
+```
+
+#### 使用USB转TTL进行通信
+``` bash
+# 树莓派的配置
+# 进去这个把serial port 打开
+sudo raspi-config 
+```
+
+``` bash
+# brltty是一种盲文显示器通信的东西
+# 这个服务会一直占用串口设备
+# 关闭brltty
+sudo systemctl stop brltty
+sudo systemctl disable brltty
+
+sudo systemctl disable brltty.service
+sudo systemctl disable brltty-udev.service
+
+
+# 不行的话直接暴力卸载
+sudo apt remove --purge brltty
+# 我直接暴力卸载了，服务怎么都关不了
+```
+
+#### 配置服务文件
+``` bash
+# 请不要尝试执行此文件，只是说明文件，不可执行
+
+# 推荐把目录放在/opt
+sudo vim /etc/systemd/system/rubocar.service
+
+####################################
+
+[Unit]
+Description=RuboCar
+After=network.target
+
+[Service]
+ExecStart=/opt/RuboVision-Engine-main/target/release/car_cv
+WorkingDirectory=/opt/RuboVision-Engine-main/target
+Restart=always         # 自动重启服务
+RestartSec=5s          # 重启前的延时（5秒）
+ExecStop=/opt/RuboVision-Engine-main/scripts/gpio_shutdown.sh
+
+# Environment=RUBOCAR_CONFIG_PATH=   //后期有需求再加
+
+[Install]
+WantedBy=multi-user.targe
+
+####################################
+
+# 重载配置
+sudo systemctl daemon-reload
+# 开机自启动
+sudo systemctl enable rubocar
+
+
+sudo systemctl start rubocar
+sudo systemctl status rubocar
+sudo systemctl restart rubocar
+sudo systemctl stop rubocar
+
+sudo journalctl -u rubocar
 ```
 
 ### 功能详述
