@@ -1,6 +1,6 @@
 ## RuboVision Engine
 ### 项目简介
-2026 RoboCup车型竞技机器人视觉组代码。部署在树莓派5的 Rust + OpenCV项目。集成颜色识别，二维码识别，GPIO状态灯，UART串口通信，cross检测。
+部署在树莓派5的 Rust + OpenCV项目。集成颜色识别，二维码识别，GPIO状态灯，UART串口通信，cross检测。
 
 [未来开发方向请点击这里](future.md) 
 
