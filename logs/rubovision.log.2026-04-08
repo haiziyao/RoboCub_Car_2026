@@ -4211,3 +4211,121 @@
 2026-04-08T13:55:33.519635Z  INFO new_car::init::task_listen: src\init\task_listen.rs:32: [TaskListener] received event: DebugEvent("debug")
 2026-04-08T13:55:33.519814Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:49: Debug event: "debug" get the func
 2026-04-08T13:55:33.520078Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: debug_fun(debug)  is running
+2026-04-08T13:57:30.030280Z  INFO new_car: src\lib.rs:29: Starting Logger Guard ... 
+2026-04-08T13:57:30.033044Z  INFO new_car: src\lib.rs:34: config loaded ... 
+2026-04-08T13:57:30.033765Z  INFO new_car: src\lib.rs:96: 
+
+██████╗ ██╗   ██╗██████╗  ██████╗ ██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗
+██╔══██╗██║   ██║██╔══██╗██╔═══██╗██║   ██║██║██╔════╝██║██╔═══██╗████╗  ██║
+██████╔╝██║   ██║██████╔╝██║   ██║██║   ██║██║███████╗██║██║   ██║██╔██╗ ██║
+██╔══██╗██║   ██║██╔══██╗██║   ██║╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║
+██║  ██║╚██████╔╝██████╔╝╚██████╔╝ ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║
+╚═╝  ╚═╝ ╚═════╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+
+                    Real-time Vision Engine
+2026-04-08T13:57:30.033931Z  INFO new_car::init::register: src\init\register.rs:23: Source initializing ...
+2026-04-08T13:57:30.034010Z  INFO new_car::source::traits: src\source\traits.rs:28: Set sender successfully
+2026-04-08T13:57:30.034089Z  INFO new_car::init::register: src\init\register.rs:27: UartSource set to [UartBinding { task_id: "uart_default", source_key: "uart_rx", device_id: "uart_device", function_id: "uart_func" }]
+2026-04-08T13:57:30.034315Z  INFO new_car::source::traits: src\source\traits.rs:28: Set sender successfully
+2026-04-08T13:57:30.034413Z  INFO new_car::source::source_uart: src\source\source_uart.rs:45: UartSource sending event UartBinding { task_id: "uart_default", source_key: "uart_rx", device_id: "uart_device", function_id: "uart_func" }
+2026-04-08T13:57:30.034618Z  INFO new_car::init::register: src\init\register.rs:35: TimerSource set to [TimerBinding { task_id: "timer_default", source_key: "timer_1s", device_id: "timer_device", function_id: "timer_func" }]
+2026-04-08T13:57:30.034690Z  INFO new_car::source::source_uart: src\source\source_uart.rs:48: UartSource sent event UartBinding { task_id: "uart_default", source_key: "uart_rx", device_id: "uart_device", function_id: "uart_func" }
+2026-04-08T13:57:30.034774Z  INFO new_car::source::traits: src\source\traits.rs:28: Set sender successfully
+2026-04-08T13:57:30.034843Z  INFO new_car::source::source_timer: src\source\source_timer.rs:43: TimerSource sending event TimerBinding { task_id: "timer_default", source_key: "timer_1s", device_id: "timer_device", function_id: "timer_func" }
+2026-04-08T13:57:30.034908Z  INFO new_car::init::register: src\init\register.rs:43: LoopSource set to [LoopBinding { task_id: "loop_default", source_key: "main_loop", device_id: "loop_device", function_id: "loop_func" }]
+2026-04-08T13:57:30.034982Z  INFO new_car::source::source_timer: src\source\source_timer.rs:46: TimerSource sent event TimerBinding { task_id: "timer_default", source_key: "timer_1s", device_id: "timer_device", function_id: "timer_func" }
+2026-04-08T13:57:30.035044Z  INFO new_car::source::traits: src\source\traits.rs:28: Set sender successfully
+2026-04-08T13:57:30.035329Z  INFO new_car::source::source_loop: src\source\source_loop.rs:47: LoopSource sending event LoopBinding { task_id: "loop_default", source_key: "main_loop", device_id: "loop_device", function_id: "loop_func" }
+2026-04-08T13:57:30.035393Z  INFO new_car::init::register: src\init\register.rs:53: WebSource set to [WebBinding { task_id: "web_default", source_key: "http_api", device_id: "web_device", function_id: "web_func" }]
+2026-04-08T13:57:30.035473Z  INFO new_car::source::source_loop: src\source\source_loop.rs:50: LoopSource sent event LoopBinding { task_id: "loop_default", source_key: "main_loop", device_id: "loop_device", function_id: "loop_func" }
+2026-04-08T13:57:30.035665Z  INFO new_car::init::register: src\init\register.rs:60: All the Source has been registered
+2026-04-08T13:57:30.035749Z  INFO new_car: src\lib.rs:55: sources are register successfully
+2026-04-08T13:57:30.035829Z  INFO new_car: src\lib.rs:59: Register Function Started ... 
+2026-04-08T13:57:30.036474Z  WARN new_car::func::register: src\func\register.rs:25: FuncID missed, default function registered: uart_func
+2026-04-08T13:57:30.036589Z  WARN new_car::func::register: src\func\register.rs:25: FuncID missed, default function registered: timer_func
+2026-04-08T13:57:30.036661Z  WARN new_car::func::register: src\func\register.rs:25: FuncID missed, default function registered: loop_func
+2026-04-08T13:57:30.036836Z  WARN new_car::func::register: src\func\register.rs:25: FuncID missed, default function registered: web_func
+2026-04-08T13:57:30.036912Z  INFO new_car: src\lib.rs:61: Register Device Started ... 
+2026-04-08T13:57:30.037057Z  INFO new_car: src\lib.rs:71: Web Debugger enabled ...  starting ...
+2026-04-08T13:57:30.037155Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: UsualEvent("uart_default", "uart_func", "uart_device")
+2026-04-08T13:57:30.037198Z  INFO new_car: src\lib.rs:72: Web Channel starting ...
+2026-04-08T13:57:30.037262Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:27: Usual event: "uart_device" get the device
+2026-04-08T13:57:30.037331Z  INFO new_car: src\lib.rs:74: Web handler starting...
+2026-04-08T13:57:30.037438Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:45: Usual event: "uart_func" get the func
+2026-04-08T13:57:30.037546Z  WARN new_car::func::register: src\func\register.rs:34: FuncID Missed , default function executing
+2026-04-08T13:57:30.037629Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: UsualEvent("timer_default", "timer_func", "timer_device")
+2026-04-08T13:57:30.037698Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:27: Usual event: "timer_device" get the device
+2026-04-08T13:57:30.037865Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:45: Usual event: "timer_func" get the func
+2026-04-08T13:57:30.037929Z  INFO web: src\web\main.rs:31: Web app starting...
+2026-04-08T13:57:30.038090Z  WARN new_car::func::register: src\func\register.rs:34: FuncID Missed , default function executing
+2026-04-08T13:57:30.038158Z  INFO web: src\web\main.rs:34: Web server listening on: 127.0.0.1:3000
+2026-04-08T13:57:30.038226Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: UsualEvent("loop_default", "loop_func", "loop_device")
+2026-04-08T13:57:30.038549Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:27: Usual event: "loop_device" get the device
+2026-04-08T13:57:30.038646Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: uart_func(a b) is running
+2026-04-08T13:57:30.038814Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:45: Usual event: "loop_func" get the func
+2026-04-08T13:57:30.038902Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:30.039022Z  WARN new_car::func::register: src\func\register.rs:34: FuncID Missed , default function executing
+2026-04-08T13:57:30.039176Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: uart_func has finished execution
+2026-04-08T13:57:30.039445Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: loop_func(a b) is running
+2026-04-08T13:57:30.039505Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: timer_func(x y z) is running
+2026-04-08T13:57:30.039595Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:30.039692Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:30.039779Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:30.039859Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:30.039942Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: loop_func has finished execution
+2026-04-08T13:57:30.040077Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:30.040153Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: timer_func has finished execution
+2026-04-08T13:57:30.040227Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:30.040266Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:30.040337Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:30.040747Z  INFO web: src\web\main.rs:39: Web server is listening ...
+2026-04-08T13:57:30.040864Z  INFO web: src\web\main.rs:13: Web message consumer started
+2026-04-08T13:57:35.044059Z  INFO new_car::source::source_loop: src\source\source_loop.rs:59: LoopSource sends debug
+2026-04-08T13:57:35.044366Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: DebugEvent("debug")
+2026-04-08T13:57:35.044579Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:49: Debug event: "debug" get the func
+2026-04-08T13:57:35.044901Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: debug_fun(debug) is running
+2026-04-08T13:57:35.316335Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:36.165219Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:36.318547Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:36.467705Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:36.596512Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:37.530509Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:38.165822Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:38.971834Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:39.649572Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:40.045761Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:40.046014Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: debug_fun has finished execution
+2026-04-08T13:57:40.046558Z  INFO new_car::source::source_loop: src\source\source_loop.rs:59: LoopSource sends debug
+2026-04-08T13:57:40.046956Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:40.047253Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: DebugEvent("debug")
+2026-04-08T13:57:40.047446Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:40.047741Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:49: Debug event: "debug" get the func
+2026-04-08T13:57:40.047901Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: debug_fun(debug) is running
+2026-04-08T13:57:40.179336Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:40.753707Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:41.290570Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:41.801612Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:42.269981Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:42.694402Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:43.095895Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:43.569876Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:44.149086Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:44.583166Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:44.952273Z  INFO new_car::web::handler: src\web\handler.rs:29: sending cached history
+2026-04-08T13:57:45.049528Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:45.049942Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: debug_fun has finished execution
+2026-04-08T13:57:45.050243Z  INFO new_car::source::source_loop: src\source\source_loop.rs:59: LoopSource sends debug
+2026-04-08T13:57:45.050594Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:45.050887Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:45.050961Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: DebugEvent("debug")
+2026-04-08T13:57:45.051124Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:49: Debug event: "debug" get the func
+2026-04-08T13:57:45.051250Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: debug_fun(debug) is running
+2026-04-08T13:57:45.805973Z  INFO new_car::web::handler: src\web\handler.rs:11: Index getting started
+2026-04-08T13:57:50.052354Z  INFO new_car::web::model: src\web\model.rs:15: this is a simple web message
+2026-04-08T13:57:50.052847Z  INFO new_car::init::task_exec: src\init\task_exec.rs:42: debug_fun has finished execution
+2026-04-08T13:57:50.053595Z  INFO new_car::source::source_loop: src\source\source_loop.rs:59: LoopSource sends debug
+2026-04-08T13:57:50.053794Z  INFO new_car::init::task_exec: src\init\task_exec.rs:60: task result sent to web channel
+2026-04-08T13:57:50.054276Z  INFO new_car::init::task_listen: src\init\task_listen.rs:29: [TaskListener] received event: DebugEvent("debug")
+2026-04-08T13:57:50.054417Z  INFO new_car::init::task_dispatch: src\init\task_dispatch.rs:49: Debug event: "debug" get the func
+2026-04-08T13:57:50.054553Z  INFO new_car::init::task_listen: src\init\task_listen.rs:37: [TaskListener] executed successfully
+2026-04-08T13:57:50.054947Z  INFO new_car::init::task_exec: src\init\task_exec.rs:34: debug_fun(debug) is running
