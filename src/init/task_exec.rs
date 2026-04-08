@@ -1,6 +1,5 @@
-use tokio::sync::mpsc::{Sender,Receiver};
+use tokio::sync::mpsc::Sender;
 use tracing::info;
-use crate::config::DeviceParam;
 use crate::device::Device;
 use crate::func::FunctionWorker;
 use crate::web::WebMessage;
@@ -33,7 +32,7 @@ pub async fn execute(sender: Sender<WebMessage>,device:Option<Device>,func:Optio
         } = func_worker;
         info!("{func_id}({args})  is running",func_id = func_id,args = args.join(" "));
         let result =func(&mut args, &mut device);
-        sender.send(result).await;
+        let _ = sender.send(result).await;
         info!("{} has finished execution",func_id);
     }
     info!("Task executor start working");

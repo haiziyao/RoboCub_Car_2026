@@ -1,13 +1,15 @@
-use axum::routing::any_service;
 use tokio::sync::mpsc::error::SendError;
 use tokio::sync::mpsc::Sender;
 use tracing::info;
+
 
 #[derive(Debug)]
 #[derive(Eq, Hash, PartialEq)]
 pub enum Event{
     UsualEvent(String,String,String),
     DebugEvent(String),
+    #[allow(dead_code)]
+    OtherEvent(String),
 }
 
 pub fn make_event_usual(task_id:&str,func_id:&str,device_id:&str) ->Event{

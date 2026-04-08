@@ -1,5 +1,4 @@
-use anyhow::Context;
-use log::{info, warn};
+use log::info;
 use crate::init::{TaskDispatcher, TaskExecutor};
 use tokio::sync::mpsc::Receiver;
 use tracing::error;

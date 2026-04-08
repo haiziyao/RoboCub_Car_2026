@@ -1,3 +1,5 @@
+#![warn(dead_code)]
+
 use tracing::{info,debug};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -19,6 +21,7 @@ impl WebMessage {
         }
     }
 
+    #[allow(dead_code)]
     pub fn with_image(text: impl Into<String>, image: impl Into<String>) -> Self {
         info!("this is a imaged web message");
         Self {

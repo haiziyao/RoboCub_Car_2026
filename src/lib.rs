@@ -1,17 +1,15 @@
 
 use anyhow::{Context, Result};
-use tracing::{info, debug, span};
+use tracing::info;
 use tokio::sync::mpsc;
 use embed::Assets;
 
 
-use crate::config::{RuntimeConfig, WebConfig};
+use crate::config::RuntimeConfig;
 use crate::init::{init_logging, register_listener};
 use crate::web::WebMessage;
 use crate::source::Event;
 use crate::init::register_source;
-use crate::config::FuncParamConfig;
-use crate::config::DeviceParamConfig;
 use crate::device::register_device;
 use crate::func::register_func;
 
@@ -36,11 +34,11 @@ pub async fn run() -> Result<()> {
     info!("config loaded ... ");
 
     let RuntimeConfig {
-        app: app_config,
+        app: _app_config,
         web: web_config,
         bindings: bindings_config,
-        func_param_config: func_param_config,
-        device_param_config: device_param_config,
+        func_param_config,
+        device_param_config,
     } = cfg;
 
     // start RuboVision
@@ -48,7 +46,7 @@ pub async fn run() -> Result<()> {
     
     // TODO: use bindings_config to register
     let (source_sender,listener_receiver) = mpsc::channel::<Event>(32);
-    register_source(bindings_config.clone(),source_sender).with_context(||"Start Failed ... caused by register_source").unwrap();
+    register_source(bindings_config,source_sender).with_context(||"Start Failed ... caused by register_source").unwrap();
 
     info!("Register Function Started ... ");
     let func_worker_map = register_func(func_param_config);
@@ -57,15 +55,14 @@ pub async fn run() -> Result<()> {
 
     // register listener(dispatcher,executor) returner
     let (executor_sender,returner_receiver) = mpsc::channel::<WebMessage>(32);
-    tokio::spawn(async move {register_listener(listener_receiver,executor_sender,
-                                   bindings_config.clone(),func_worker_map,device_map)
+    tokio::spawn(async move {register_listener(listener_receiver,executor_sender, func_worker_map,device_map)
                      .run().await});
 
     // start Web Debugger
-    if(web_config.on) {
+    if web_config.on {
         info!("Web Debugger enabled ...  starting ...");
         info!("Web Channel starting ...");
-        let web_handler = tokio::spawn(async move {
+        let _web_handler = tokio::spawn(async move {
             info!("Web handler starting...");
             web::run(web_config,returner_receiver).await;
         });

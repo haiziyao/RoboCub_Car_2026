@@ -1,6 +1,3 @@
-use std::thread::sleep;
-use std::time::Duration;
-use tracing::field::debug;
 use tracing::warn;
 use crate::config::{FuncParamConfig, FuncParam};
 use crate::device::Device;
@@ -9,7 +6,7 @@ use crate::web::WebMessage;
 use crate::func::usual::*;
 
 pub fn register_func(cfg: FuncParamConfig) -> FuncWorkerMap {
-    let FuncParamConfig{func_param_list:func_param_list} = cfg;
+    let FuncParamConfig{func_param_list} = cfg;
     let mut map = FuncWorkerMap::new();
     func_param_list.iter().for_each(|x|{ 
         let FuncParam{ function_id, args } = &x;

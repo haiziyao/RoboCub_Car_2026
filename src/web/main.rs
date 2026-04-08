@@ -1,9 +1,10 @@
-use tracing::info;
+use tracing::{info};
 use crate::config::WebConfig;
 use crate::web::router::router;
 use tokio::sync::mpsc;
 use crate::web::state::WebState;
 use super::WebMessage;
+
 
 pub async fn run(config: WebConfig,rx: mpsc::Receiver<WebMessage>) {
 
@@ -11,13 +12,14 @@ pub async fn run(config: WebConfig,rx: mpsc::Receiver<WebMessage>) {
     let state = WebState::new(rx);
 
     let app = router(state);
-    info!("Web app starting...");
+    info!(target: "web","Web app starting...");
 
     let addr = format!("{}:{}", config.host, config.port);
 
-    info!("Web server listening on: \x1b[34m{}\x1b[0m", addr);
+    info!(target: "web","Web server listening on: {}", addr);
+
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    info!("Web server is listening ...");
+    info!(target: "web","Web server is listening ...");
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -28,8 +30,9 @@ pub async fn run(config: WebConfig,rx: mpsc::Receiver<WebMessage>) {
 #[cfg(test)]
 mod tests {
     use tokio::sync::mpsc;
+    use tracing::info;
     use crate::config::WebConfig;
-    use crate::utils::image_to_data_url;
+    use crate::utils::web_tools::image_to_data_url;
     use crate::web::main::run;
     use crate::web::WebMessage;
 
@@ -48,7 +51,7 @@ mod tests {
             let _ = run(config, rx).await;
         });
 
-        println!("open http://127.0.0.1:3000");
+        info!("open http://127.0.0.1:3000");
 
 
         tx.send(WebMessage::ok(String::from("hello world")))

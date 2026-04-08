@@ -6,7 +6,7 @@ use crate::device::usual::*;
 // TODO :
 pub fn register_device(config: DeviceParamConfig) -> DeviceMap {
     let DeviceParamConfig{
-        device_config_list:device_config_list,
+        device_config_list,
     } = config;
     let mut map = DeviceMap::new();
     device_config_list.iter().for_each(|device_config| {

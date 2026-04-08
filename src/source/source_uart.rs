@@ -2,11 +2,13 @@ use anyhow::anyhow;
 use log::warn;
 use tracing::info;
 use crate::source::{Source, BaseSource, make_event_usual};
-use crate::source::source_timer::TimerSource;
 use crate::config::binding::UartBinding;
+
+
 #[derive(Default)]
 pub struct UartSource {
     pub base: BaseSource,
+    #[allow(dead_code)]
     pub port: String,
 }
 
@@ -19,7 +21,7 @@ impl Source for UartSource {
         &mut self.base
     }
 }
-
+#[warn(unused)]
 impl UartSource {
     pub fn new() -> Self {
         Self::default()
@@ -28,7 +30,7 @@ impl UartSource {
     pub async fn start(&self,uart_binding: Vec<UartBinding>) -> anyhow::Result<()> {
 
         // to get the sender
-        let Some(tx) = self.get_sender() else {
+        let Some(_tx) = self.get_sender() else {
             warn!("LoopSource.listen called before sender was initialized");
             return Err(anyhow!("source sender is not initialized"));
         };

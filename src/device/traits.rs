@@ -30,12 +30,6 @@ impl DeviceMap {
     pub fn add(&mut self, device_id:&str,device: Device) {
         self.device_list.insert(device_id.to_string(),device);
     }
-    pub fn get_device_map(&self) -> &HashMap<String,Device> {
-        &self.device_list
-    }
-    pub fn get_device_map_mut(&mut self) -> &mut HashMap<String,Device> {
-        &mut self.device_list
-    }
 
     pub fn get_device(&mut self, device_id:&String) -> Option<Device> {
         self.device_list.remove(device_id)

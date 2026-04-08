@@ -1,3 +1,5 @@
+#![warn(dead_code)]
+
 use anyhow::anyhow;
 use log::warn;
 use tracing::info;
@@ -26,7 +28,7 @@ impl TimerSource {
     pub async fn start(&self,timer_binding: Vec<TimerBinding> ) -> anyhow::Result<()> {
 
         // to get the sender
-        let Some(tx) = self.get_sender() else {
+        let Some(_tx) = self.get_sender() else {
             warn!("LoopSource.listen called before sender was initialized");
             return Err(anyhow!("source sender is not initialized"));
         };

@@ -1,6 +1,5 @@
-use std::collections::HashMap;
 use crate::config::{BindingsConfig};
-use crate::device::{Device, DeviceMap};
+use crate::device::DeviceMap;
 use crate::web::WebMessage;
 use crate::source::{UartSource, TimerSource, WebSource, LoopSource, Source, Event};
 
@@ -16,10 +15,10 @@ pub fn register_source(bindings_config: BindingsConfig,tx: tokio::sync::mpsc::Se
         // TODO
         // 这个命名给我带来了不小的困扰啊
         // 这下真成了: 我写的代码只能由我自己看懂了
-        uart_source: uart_source,
-        timer_source:  timer_source,
-        loop_source: loop_source,
-        web_source: web_source,
+        uart_source,
+        timer_source,
+        loop_source,
+        web_source,
     } = bindings_config;
     info!("Source initializing ...");
     if !uart_source.is_empty(){
@@ -65,9 +64,9 @@ pub fn register_source(bindings_config: BindingsConfig,tx: tokio::sync::mpsc::Se
 
 pub fn register_listener(listener_receiver:tokio::sync::mpsc::Receiver<Event>,
                           exeutor_sender:tokio::sync::mpsc::Sender<WebMessage>,
-                          bindings_config: BindingsConfig,func_worker_map: FuncWorkerMap,
+                          func_worker_map: FuncWorkerMap,
                                 device_map: DeviceMap) ->TaskListener {
-    let dispatcher = TaskDispatcher::new(bindings_config, func_worker_map,device_map);
+    let dispatcher = TaskDispatcher::new( func_worker_map,device_map);
     let executor = TaskExecutor::new(exeutor_sender);
     TaskListener::new(executor, listener_receiver, dispatcher)
 }

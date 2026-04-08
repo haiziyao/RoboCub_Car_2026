@@ -4,6 +4,7 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 
+#[allow(dead_code)]
 pub fn image_to_data_url(path: impl AsRef<Path>) -> Result<String> {
     let path = path.as_ref();
 

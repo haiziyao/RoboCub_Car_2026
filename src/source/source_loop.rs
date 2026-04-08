@@ -1,9 +1,8 @@
-use std::sync::mpsc::Sender;
-use std::thread::sleep;
+#![warn(dead_code)]
+
 use std::time::Duration;
 use log::warn;
 use anyhow::{anyhow, Result};
-use axum::handler::Handler;
 use tracing::info;
 use crate::source::{Source, BaseSource, Event, make_event_usual};
 use crate::config::binding::LoopBinding;
@@ -61,7 +60,6 @@ impl LoopSource {
                 Err(e) => warn!("LoopSource sends nothing error {:?}", e)
             }
         }
-        Ok(())
     }
 }
 

@@ -1,11 +1,11 @@
 use tracing::{debug, info, warn};
-use crate::config::{BindingsConfig};
 use crate::source::{Event};
 use crate::device::{Device, DeviceMap};
 use crate::func::{fn_debug, FuncWorkerMap, FunctionWorker};
 
+
+#[warn(unused)]
 pub struct TaskDispatcher{
-    bindings: BindingsConfig,
     func_worker_map: FuncWorkerMap,
     device_map: DeviceMap,
 }
@@ -13,9 +13,8 @@ pub struct TaskDispatcher{
 
 
 impl TaskDispatcher {
-    pub fn new(bindings: BindingsConfig,func_worker_map: FuncWorkerMap,device_map: DeviceMap) -> Self {
+    pub fn new(func_worker_map: FuncWorkerMap,device_map: DeviceMap) -> Self {
         TaskDispatcher {
-            bindings,
             func_worker_map,
             device_map,
         }
