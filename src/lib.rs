@@ -1,36 +1,32 @@
-
 use anyhow::{Context, Result};
-use tracing::{info, warn};
-use tokio::sync::mpsc;
 use embed::Assets;
-
+use tokio::sync::mpsc;
+use tracing::{info, warn};
 
 use crate::config::RuntimeConfig;
-use crate::init::{init_logging, register_listener};
-use crate::web::WebMessage;
-use crate::source::Event;
-use crate::init::register_source;
 use crate::device::register_device;
 use crate::func::register_func;
+use crate::init::register_source;
+use crate::init::{init_logging, register_listener};
+use crate::source::Event;
+use crate::web::WebMessage;
 
 mod config;
-mod source;
-mod embed;
-mod init;
-mod web;
-mod utils;
-mod func;
 mod device;
+mod embed;
+mod func;
+mod init;
+mod source;
+mod utils;
+mod web;
 
 pub async fn run() -> Result<()> {
-
     // init logger
     let _guard = init_logging();
     info!("Starting Logger Guard ... ");
 
     // read config
-    let cfg = config::load_config()
-        .with_context(|| "failed to load config")?;
+    let cfg = config::load_config().with_context(|| "failed to load config")?;
     info!("config loaded ... ");
 
     let RuntimeConfig {
@@ -41,19 +37,22 @@ pub async fn run() -> Result<()> {
         device_param_config,
     } = cfg;
 
+    let uart_config = device_param_config.uart_config.clone();
+
     // start RuboVision
     print_banner();
-    
+
     // TODO: use bindings_config to register
-    let (source_sender,listener_receiver) = mpsc::channel::<Event>(32);
-    match register_source(bindings_config,source_sender).with_context(||"Start Failed ... caused by register_source"){
+    let (source_sender, listener_receiver) = mpsc::channel::<Event>(32);
+    match register_source(bindings_config, source_sender, uart_config)
+        .with_context(|| "Start Failed ... caused by register_source")
+    {
         Err(e) => {
             warn!("register source failed {e}");
-            panic!();
-        },
-        _ =>{
+        }
+        _ => {
             info!("sources are register successfully");
-        } ,
+        }
     };
 
     info!("Register Function Started ... ");
@@ -62,9 +61,17 @@ pub async fn run() -> Result<()> {
     let device_map = register_device(device_param_config);
 
     // register listener(dispatcher,executor) returner
-    let (executor_sender,returner_receiver) = mpsc::channel::<WebMessage>(32);
-    tokio::spawn(async move {register_listener(listener_receiver,executor_sender, func_worker_map,device_map)
-                     .run().await});
+    let (executor_sender, returner_receiver) = mpsc::channel::<WebMessage>(32);
+    tokio::spawn(async move {
+        register_listener(
+            listener_receiver,
+            executor_sender,
+            func_worker_map,
+            device_map,
+        )
+        .run()
+        .await
+    });
 
     // start Web Debugger
     if web_config.on {
@@ -72,7 +79,12 @@ pub async fn run() -> Result<()> {
         info!("Web Channel starting ...");
         let _web_handler = tokio::spawn(async move {
             info!("Web handler starting...");
-            let _ =web::run(web_config,returner_receiver).await;
+            let _ = web::run(web_config, returner_receiver).await;
+        });
+    } else {
+        info!("Web Debugger disabled ... draining task messages to logs");
+        tokio::spawn(async move {
+            drain_web_messages(returner_receiver).await;
         });
     }
 
@@ -82,26 +94,26 @@ pub async fn run() -> Result<()> {
     Ok(())
 }
 
-
-
-
-
-pub fn print_banner() {
-    let file = Assets::get("project/banner.txt")
-        .expect("banner not found");
-
-    let content = std::str::from_utf8(file.data.as_ref())
-        .expect("invalid utf8");
-
-    info!("\n{}", content);
-     
+async fn drain_web_messages(mut rx: mpsc::Receiver<WebMessage>) {
+    while let Some(msg) = rx.recv().await {
+        info!(
+            "web disabled, task message dropped after logging: {:?}",
+            msg
+        );
+    }
 }
 
+pub fn print_banner() {
+    let file = Assets::get("project/banner.txt").expect("banner not found");
 
+    let content = std::str::from_utf8(file.data.as_ref()).expect("invalid utf8");
 
+    info!("\n{}", content);
+}
 
 #[cfg(test)]
 #[tokio::test]
-async fn test_run(){
+#[ignore = "starts the full runtime and waits for ctrl-c"]
+async fn test_run() {
     run().await.unwrap();
 }

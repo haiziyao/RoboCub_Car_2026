@@ -1,10 +1,8 @@
-use serde::{Deserialize,Serialize};
+use serde::{Deserialize, Serialize};
 
-
-
-#[derive(Debug,Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(default)]
-pub struct AppConfig{
+pub struct AppConfig {
     name: String,
     profile: String,
     log_level: String,
@@ -12,7 +10,7 @@ pub struct AppConfig{
 
 impl Default for AppConfig {
     fn default() -> Self {
-        AppConfig{
+        AppConfig {
             name: "rubovision".to_string(),
             profile: "dev".to_string(),
             log_level: "info".to_string(),

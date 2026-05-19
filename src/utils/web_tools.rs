@@ -2,14 +2,14 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use base64::{engine::general_purpose::STANDARD, Engine as _};
+use base64::{Engine as _, engine::general_purpose::STANDARD};
 
 #[allow(dead_code)]
 pub fn image_to_data_url(path: impl AsRef<Path>) -> Result<String> {
     let path = path.as_ref();
 
-    let bytes = fs::read(path)
-        .with_context(|| format!("failed to read image file: {}", path.display()))?;
+    let bytes =
+        fs::read(path).with_context(|| format!("failed to read image file: {}", path.display()))?;
 
     let ext = path
         .extension()
@@ -29,7 +29,6 @@ pub fn image_to_data_url(path: impl AsRef<Path>) -> Result<String> {
     let encoded = STANDARD.encode(bytes);
     Ok(format!("data:{mime};base64,{encoded}"))
 }
-
 
 #[cfg(test)]
 #[test]

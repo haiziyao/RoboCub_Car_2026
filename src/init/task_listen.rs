@@ -1,9 +1,9 @@
-﻿use log::info;
+use log::info;
 use tokio::sync::mpsc::Receiver;
 use tracing::error;
 
-use crate::init::{TaskDispatcher, TaskExecutor};
 use crate::init::task_exec::execute;
+use crate::init::{TaskDispatcher, TaskExecutor};
 use crate::source::Event;
 
 pub struct TaskListener {
@@ -13,7 +13,11 @@ pub struct TaskListener {
 }
 
 impl TaskListener {
-    pub fn new(executor: TaskExecutor, listener: Receiver<Event>, dispatcher: TaskDispatcher) -> Self {
+    pub fn new(
+        executor: TaskExecutor,
+        listener: Receiver<Event>,
+        dispatcher: TaskDispatcher,
+    ) -> Self {
         TaskListener {
             executor,
             listener,

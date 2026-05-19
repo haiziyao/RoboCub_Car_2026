@@ -1,25 +1,23 @@
+use crate::config::device::DeviceParamConfig;
+use crate::config::func::FuncParamConfig;
+use crate::config::{AppConfig, BindingsConfig, WebConfig};
 use serde::{Deserialize, Serialize};
-use crate::config::{AppConfig, WebConfig, BindingsConfig};
-use crate::config::device::{DeviceParamConfig};
-use crate::config::func::{FuncParamConfig};
 
 pub fn load_config() -> Result<RuntimeConfig, config::ConfigError> {
     let builder = config::Config::builder()
         .add_source(config::File::with_name("config/app").required(true))
         .add_source(config::File::with_name("config/web").required(true))
-        .add_source(config::File::with_name("config/bindings").required(false))
-        .add_source(config::File::with_name("config/func_param").required(false))
-        .add_source(config::File::with_name("config/device").required(false))
+        .add_source(config::File::with_name("config/bindings").required(true))
+        .add_source(config::File::with_name("config/func_param").required(true))
+        .add_source(config::File::with_name("config/device").required(true))
         .add_source(config::Environment::with_prefix("RUBO"));
 
     let cfg = builder.build()?;
     cfg.try_deserialize()
 }
 
-
-
-#[derive(Debug,Clone, Deserialize, Serialize)]
-pub struct RuntimeConfig{
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct RuntimeConfig {
     pub app: AppConfig,
     pub web: WebConfig,
     pub bindings: BindingsConfig,

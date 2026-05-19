@@ -1,11 +1,8 @@
-mod usual;
-mod tarits;
 mod register;
+mod tarits;
+mod usual;
 
 pub use usual::*;
 
-
-
-
-pub use tarits::*;
 pub use register::register_func;
+pub use tarits::*;

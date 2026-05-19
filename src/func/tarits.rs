@@ -1,60 +1,74 @@
-use std::collections::HashMap;
+use crate::config::FuncReturnConfig;
 use crate::device::Device;
 use crate::web::WebMessage;
+use std::collections::HashMap;
 
-pub type FunctionBuilder =
-fn() -> Box<dyn FnMut(&mut Vec<String>, &mut Device) -> WebMessage + Send>;
+pub type Function = fn(&[String], &Device, &FuncReturnConfig) -> WebMessage;
 
 pub struct FunctionDef {
     pub func_id: String,
     pub args: Vec<String>,
-    pub builder: FunctionBuilder,
+    pub returns: FuncReturnConfig,
+    pub func: Function,
 }
 
 impl FunctionDef {
-    pub fn new(func_id: &str, args: Vec<String>, builder: FunctionBuilder) -> Self {
+    pub fn new(
+        func_id: &str,
+        args: Vec<String>,
+        returns: FuncReturnConfig,
+        func: Function,
+    ) -> Self {
         Self {
             func_id: func_id.to_string(),
             args,
-            builder,
+            returns,
+            func,
         }
     }
 
     pub fn build_worker(&self) -> FunctionWorker {
         FunctionWorker::new(
             &self.func_id,
-            (self.builder)(),
+            self.func,
             self.args.clone(),
+            self.returns.clone(),
         )
     }
 }
 
-
-pub struct FunctionWorker{
+pub struct FunctionWorker {
     pub func_id: String,
-    pub func :Box<dyn FnMut(&mut Vec<String>,&mut Device) -> WebMessage + Send>,
+    pub func: Function,
     pub args: Vec<String>,
+    pub returns: FuncReturnConfig,
 }
 
-impl FunctionWorker{
-    pub fn new(func_id: &str, func: Box<dyn FnMut(&mut Vec<String>,&mut Device) -> WebMessage + Send>,args:Vec<String>) -> Self{
-        let func_id =func_id.to_string();
+impl FunctionWorker {
+    pub fn new(
+        func_id: &str,
+        func: Function,
+        args: Vec<String>,
+        returns: FuncReturnConfig,
+    ) -> Self {
+        let func_id = func_id.to_string();
         Self {
             func_id: func_id.to_string(),
             func,
             args,
+            returns,
         }
     }
 }
 
 pub struct FuncWorkerMap {
-    pub func_worker_map:HashMap<String, FunctionDef>,
+    pub func_worker_map: HashMap<String, FunctionDef>,
 }
 
 impl FuncWorkerMap {
-    pub fn new() -> Self{
+    pub fn new() -> Self {
         FuncWorkerMap {
-            func_worker_map:HashMap::new(),
+            func_worker_map: HashMap::new(),
         }
     }
 
@@ -62,10 +76,10 @@ impl FuncWorkerMap {
         self.func_worker_map.insert(func_id.to_string(), def);
     }
 
-    pub fn get_func(&self, func_id: &str) -> Option<FunctionWorker> {
-        self.func_worker_map.get(func_id).map(|def| def.build_worker())
+    pub fn get_func(&self, func_id: &str) -> FunctionWorker {
+        self.func_worker_map
+            .get(func_id)
+            .unwrap_or_else(|| panic!("unknown function_id `{func_id}`"))
+            .build_worker()
     }
-
 }
-
-

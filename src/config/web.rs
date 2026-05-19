@@ -1,10 +1,8 @@
-use serde::{Deserialize,Serialize};
+use serde::{Deserialize, Serialize};
 
-
-
-#[derive(Debug,Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(default)]
-pub struct WebConfig{
+pub struct WebConfig {
     pub on: bool,
     pub host: String,
     pub port: u16,
@@ -12,7 +10,7 @@ pub struct WebConfig{
 
 impl Default for WebConfig {
     fn default() -> Self {
-        WebConfig{
+        WebConfig {
             on: true,
             host: "127.0.0.1".to_string(),
             port: 3000,

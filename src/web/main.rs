@@ -1,15 +1,12 @@
-﻿use anyhow::{Context, Result};
-use tracing::info;
+use super::WebMessage;
 use crate::config::WebConfig;
 use crate::web::router::router;
-use tokio::sync::mpsc;
 use crate::web::state::WebState;
-use super::WebMessage;
+use anyhow::{Context, Result};
+use tokio::sync::mpsc;
+use tracing::info;
 
-async fn consume_web_messages(
-    mut rx: mpsc::Receiver<WebMessage>,
-    state: WebState,
-) {
+async fn consume_web_messages(mut rx: mpsc::Receiver<WebMessage>, state: WebState) {
     info!(target: "web", "Web message consumer started");
 
     while let Some(msg) = rx.recv().await {
@@ -20,7 +17,7 @@ async fn consume_web_messages(
 }
 
 pub async fn run(config: WebConfig, rx: mpsc::Receiver<WebMessage>) -> Result<()> {
-    let state = WebState::new(20);
+    let state = WebState::new(20, "logs/web_messages.jsonl").await?;
 
     let consumer_state = state.clone();
     tokio::spawn(async move {
@@ -47,14 +44,15 @@ pub async fn run(config: WebConfig, rx: mpsc::Receiver<WebMessage>) -> Result<()
 
 #[cfg(test)]
 mod tests {
-    use tokio::sync::mpsc;
-    use tracing::info;
     use crate::config::WebConfig;
     use crate::utils::web_tools::image_to_data_url;
-    use crate::web::main::run;
     use crate::web::WebMessage;
+    use crate::web::main::run;
+    use tokio::sync::mpsc;
+    use tracing::info;
 
     #[tokio::test]
+    #[ignore = "starts a long-running local web server"]
     async fn test_run_server() {
         let config = WebConfig {
             on: true,
@@ -71,12 +69,11 @@ mod tests {
         info!("open http://127.0.0.1:3000");
 
         tx.send(WebMessage::ok(String::from("hello world")))
-            .await.expect("not send");
+            .await
+            .expect("not send");
 
-        let image_base64 =
-            image_to_data_url("static/image/a.jpg").unwrap();
-        let image2 =
-            image_to_data_url("static/image/b.jpg").unwrap();
+        let image_base64 = image_to_data_url("static/image/a.jpg").unwrap();
+        let image2 = image_to_data_url("static/image/b.jpg").unwrap();
 
         tx.send(WebMessage::ok("first message: text only"))
             .await
@@ -86,8 +83,8 @@ mod tests {
             "second message: with image",
             image_base64,
         ))
-            .await
-            .expect("send second message failed");
+        .await
+        .expect("send second message failed");
 
         tx.send(WebMessage::closed())
             .await
@@ -97,8 +94,8 @@ mod tests {
                 "second message: with image",
                 image2.clone(),
             ))
-                .await
-                .expect("send second message failed");
+            .await
+            .expect("send second message failed");
         }
 
         tokio::time::sleep(std::time::Duration::from_secs(300)).await;

@@ -1,10 +1,11 @@
 #![warn(dead_code)]
 
+use crate::config::binding::TimerBinding;
+use crate::source::{BaseSource, Source, make_event_usual};
 use anyhow::anyhow;
 use log::warn;
 use tracing::info;
-use crate::source::{Source, BaseSource, make_event_usual};
-use crate::config::binding::TimerBinding;
+
 #[derive(Default)]
 pub struct TimerSource {
     pub base: BaseSource,
@@ -25,8 +26,7 @@ impl TimerSource {
         Self::default()
     }
 
-    pub async fn start(&self,timer_binding: Vec<TimerBinding> ) -> anyhow::Result<()> {
-
+    pub async fn start(&self, timer_binding: Vec<TimerBinding>) -> anyhow::Result<()> {
         // to get the sender
         let Some(_tx) = self.get_sender() else {
             warn!("LoopSource.listen called before sender was initialized");

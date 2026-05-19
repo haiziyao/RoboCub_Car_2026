@@ -1,30 +1,24 @@
-# uart_source: Vec<UartBinding>
+[bindings]
+timer_source = []
+
+# UART source bindings.
+# source_key 是电控发来的命令，命中后由配置决定调用哪个 device + function。
 [[bindings.uart_source]]
-task_id = "uart_default"
-source_key = "uart_rx"
-device_id = "uart_device"
-function_id = "uart_func"
+task_id = "uart_color_detect"
+source_key = "a1"
+device_id = "color_camera"
+function_id = "color_detect"
 
+[[bindings.uart_source]]
+task_id = "uart_qr_detect"
+source_key = "b2"
+device_id = "qr_camera"
+function_id = "qr_detect"
 
-# timer_source: Vec<TimerBinding>
-[[bindings.timer_source]]
-task_id = "timer_default"
-source_key = "timer_1s"
-device_id = "timer_device"
-function_id = "timer_func"
-
-
-# loop_source: Vec<LoopBinding>
-[[bindings.loop_source]]
-task_id = "loop_default"
-source_key = "main_loop"
-device_id = "loop_device"
-function_id = "loop_func"
-
-
-# web_source: Vec<WebBinding>
-[[bindings.web_source]]
-task_id = "web_default"
-source_key = "http_api"
-device_id = "web_device"
-function_id = "web_func"
+# Debug loop source.
+# 启动后先发送一次 debug_fun，之后 LoopSource 每 5 秒发送一次 DebugEvent。
+# [[bindings.loop_source]]
+# task_id = "loop_debug"
+# source_key = "debug"
+# device_id = "none"
+# function_id = "debug_fun"

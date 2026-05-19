@@ -1,7 +1,8 @@
-﻿use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use tokio::sync::mpsc::Sender;
 use tracing::info;
 
+use crate::config::FuncReturnConfig;
 use crate::device::Device;
 use crate::func::FunctionWorker;
 use crate::web::WebMessage;
@@ -21,14 +22,15 @@ impl TaskExecutor {
     }
 }
 
-pub fn execute_sync(device: Option<Device>, func: Option<FunctionWorker>) -> Result<WebMessage> {
-    let mut device = device.unwrap_or(Device::None);
-    let func_worker = func.ok_or_else(|| anyhow!("function not found"))?;
-
+pub fn execute_sync(
+    device: Device,
+    func_worker: FunctionWorker,
+) -> Result<(WebMessage, FuncReturnConfig)> {
     let FunctionWorker {
         func_id,
-        mut args,
-        mut func,
+        args,
+        func,
+        returns,
     } = func_worker;
 
     info!(
@@ -37,26 +39,30 @@ pub fn execute_sync(device: Option<Device>, func: Option<FunctionWorker>) -> Res
         args = args.join(" ")
     );
 
-    let result = func(&mut args, &mut device);
+    let result = func(&args, &device, &returns);
 
     info!("{} has finished execution", func_id);
-    Ok(result)
+    Ok((result, returns))
 }
 
 pub async fn execute(
     sender: Sender<WebMessage>,
-    device: Option<Device>,
-    func: Option<FunctionWorker>,
+    device: Device,
+    func: FunctionWorker,
 ) -> Result<()> {
-    let result = tokio::task::spawn_blocking(move || execute_sync(device, func))
+    let (result, returns) = tokio::task::spawn_blocking(move || execute_sync(device, func))
         .await
         .context("blocking task join failed")??;
 
-    sender
-        .send(result)
-        .await
-        .context("failed to send web message")?;
+    if returns.web {
+        sender
+            .send(result)
+            .await
+            .context("failed to send web message")?;
 
-    info!("task result sent to web channel");
+        info!("task result sent to web channel");
+    } else {
+        info!("task result web return disabled: {:?}", result);
+    }
     Ok(())
 }

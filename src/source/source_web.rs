@@ -1,10 +1,9 @@
 #![warn(dead_code)]
 
+use crate::config::binding::WebBinding;
+use crate::source::{BaseSource, Source};
 use anyhow::anyhow;
 use log::warn;
-use crate::source::{Source, BaseSource};
-use crate::config::binding::WebBinding;
-
 
 #[derive(Default)]
 pub struct WebSource {
@@ -26,16 +25,15 @@ impl WebSource {
         Self::default()
     }
 
-    pub async fn start(&self,_web_binding: Vec<WebBinding>) -> anyhow::Result<()> {
-        
+    pub async fn start(&self, _web_binding: Vec<WebBinding>) -> anyhow::Result<()> {
         // to get the sender
         let Some(_tx) = self.get_sender() else {
             warn!("LoopSource.listen called before sender was initialized");
             return Err(anyhow!("source sender is not initialized"));
         };
-        
+
         // TODO
-        
+
         Ok(())
     }
 }

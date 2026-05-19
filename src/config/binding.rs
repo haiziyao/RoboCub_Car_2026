@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 // 这个的属性的命名也是难绷。。。以后再改吧
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 #[serde(default)]

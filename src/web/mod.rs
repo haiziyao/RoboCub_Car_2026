@@ -1,10 +1,9 @@
-mod main;
-mod router;
-mod handler;
-mod model;
 mod error;
+mod handler;
+mod main;
+mod model;
+mod router;
 mod state;
 
-
-pub use model::*;
 pub use main::run;
+pub use model::*;

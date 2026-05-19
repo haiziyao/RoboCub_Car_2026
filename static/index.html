@@ -303,7 +303,7 @@
 <main class="page">
     <section class="hero">
         <h1>RuboVision Message Panel</h1>
-        <p>首页轮询 <code>/message</code>，历史记录来自后端缓存 <code>/history</code>。`204` 只计入空消息，不进入历史。</p>
+        <p>首页轮询 <code>/message</code>，历史记录来自后端内存缓存 <code>/history</code>，启动时从本地 JSONL 恢复最近记录。</p>
     </section>
 
     <section class="grid">
@@ -397,6 +397,9 @@
     let historyTimer = null;
     let messageInFlight = false;
     let historyInFlight = false;
+    let manualHistorySyncQueued = false;
+    let latestSeenMessageId = 0;
+    let historyClearAfterId = 0;
 
     const codeBadge = document.getElementById('code-badge');
     const textNode = document.getElementById('text');
@@ -426,8 +429,10 @@
         return 'badge';
     }
 
-    function nowString() {
-        return new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    function formatMessageTime(createdAtMs) {
+        const timestamp = Number(createdAtMs ?? 0);
+        if (!Number.isFinite(timestamp) || timestamp <= 0) return '--:--:--';
+        return new Date(timestamp).toLocaleTimeString('zh-CN', { hour12: false });
     }
 
     function summarizeImage(image) {
@@ -446,18 +451,40 @@
         if (!data || typeof data !== 'object') return false;
         const code = Number(data.code ?? 0);
         const text = typeof data.text === 'string' ? data.text.trim() : '';
-        return Number.isFinite(code) && code >= 200 && code < 300 && code !== 204 && text.length > 0;
+        const id = Number(data.id ?? 0);
+        return Number.isFinite(code) && code !== 204 && text.length > 0 && Number.isFinite(id) && id > 0;
     }
 
-    function normalizeHistory(items) {
+    function rememberMessageId(data) {
+        const id = Number(data?.id ?? 0);
+        if (Number.isFinite(id) && id > latestSeenMessageId) {
+            latestSeenMessageId = id;
+        }
+    }
+
+    function rememberHistoryItems(items) {
+        items.forEach(item => {
+            if (isValidMessage(item)) {
+                rememberMessageId(item);
+            }
+        });
+    }
+
+    function normalizeHistory(items, options = {}) {
+        const respectLocalClear = options.respectLocalClear ?? true;
+        const clearAfterId = respectLocalClear ? historyClearAfterId : 0;
+        rememberHistoryItems(items);
         return items
             .filter(isValidMessage)
+            .filter(item => Number(item.id ?? 0) > clearAfterId)
             .slice(0, MAX_HISTORY)
-            .map((item, index) => ({
+            .map(item => ({
+                id: Number(item.id ?? 0),
+                created_at_ms: Number(item.created_at_ms ?? 0),
                 code: item.code ?? 0,
                 text: item.text ?? '',
                 image: item.image ?? null,
-                time: nowString() + ` #${index + 1}`,
+                time: formatMessageTime(item.created_at_ms),
             }));
     }
 
@@ -518,7 +545,7 @@
                         <span class="history-time">${escapeHtml(item.time)}</span>
                     </div>
                     <p class="history-text">${escapeHtml(item.text)}</p>
-                    <div class="history-tag">image=${item.image ? 'yes' : 'no'}</div>
+                    <div class="history-tag">id=${escapeHtml(String(item.id))} image=${item.image ? 'yes' : 'no'}</div>
                     ${imageBlock}
                 </div>
             `;
@@ -562,7 +589,10 @@
         if (!isValidMessage(data)) {
             invalidRequestCount += 1;
             updateCounters();
+            return;
         }
+
+        rememberMessageId(data);
     }
 
     async function syncHistory() {
@@ -574,7 +604,9 @@
         historyInFlight = true;
         try {
             const items = await requestHistory();
-            historyItems = normalizeHistory(Array.isArray(items) ? items : []);
+            historyItems = normalizeHistory(Array.isArray(items) ? items : [], {
+                respectLocalClear: true,
+            });
             renderHistory();
             updateCounters();
         } catch (error) {
@@ -583,6 +615,7 @@
         } finally {
             historyInFlight = false;
             scheduleHistoryPoll();
+            flushQueuedManualHistorySync();
         }
     }
 
@@ -628,11 +661,17 @@
     }
 
     async function fetchHistoryOnce() {
-        if (historyInFlight) return;
+        if (historyInFlight) {
+            manualHistorySyncQueued = true;
+            return;
+        }
         historyInFlight = true;
         try {
             const items = await requestHistory();
-            historyItems = normalizeHistory(Array.isArray(items) ? items : []);
+            historyClearAfterId = 0;
+            historyItems = normalizeHistory(Array.isArray(items) ? items : [], {
+                respectLocalClear: false,
+            });
             renderHistory();
             updateCounters();
         } catch (error) {
@@ -640,6 +679,7 @@
             updateCounters();
         } finally {
             historyInFlight = false;
+            flushQueuedManualHistorySync();
         }
     }
 
@@ -664,6 +704,20 @@
         updateCounters();
     }
 
+    function clearLocalHistoryView() {
+        rememberHistoryItems(historyItems);
+        historyClearAfterId = latestSeenMessageId;
+        historyItems = [];
+        renderHistory();
+        updateCounters();
+    }
+
+    function flushQueuedManualHistorySync() {
+        if (!manualHistorySyncQueued || historyInFlight) return;
+        manualHistorySyncQueued = false;
+        fetchHistoryOnce();
+    }
+
     function escapeHtml(value) {
         return String(value)
             .replaceAll('&', '&amp;')
@@ -686,11 +740,7 @@
     stopPollingButton.addEventListener('click', stopPolling);
     refreshNowButton.addEventListener('click', fetchOnce);
     refreshHistoryButton.addEventListener('click', fetchHistoryOnce);
-    clearHistoryButton.addEventListener('click', () => {
-        historyItems = [];
-        renderHistory();
-        updateCounters();
-    });
+    clearHistoryButton.addEventListener('click', clearLocalHistoryView);
 
     renderHistory();
     updateCounters();

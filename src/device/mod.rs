@@ -1,6 +1,8 @@
-mod usual;
-mod traits;
 mod register;
+mod traits;
+mod usual;
+mod vision;
 
-pub use traits::*;
 pub use register::register_device;
+pub use traits::*;
+pub use vision::*;

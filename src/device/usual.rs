@@ -1,8 +1,7 @@
+use crate::device::{CameraDevice, Device, UartDeviceConfig};
 use tracing::info;
-use crate::device::Device;
 
-// TODO
-pub fn register_camera(args:&Vec<String>)->Device {
+pub fn register_camera(args: &[String], uart: UartDeviceConfig) -> Device {
     info!("Registering camera with args {:?}", args);
-    Device::Camera(" ".to_string())
+    Device::Camera(CameraDevice::from_args(args, uart).expect("invalid camera config"))
 }
